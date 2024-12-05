@@ -22,3 +22,11 @@ func ToInt(input string) int {
 	}
 	return value
 }
+
+func ToIntArray(input []string) []int {
+	array := []int{}
+	for i := range input {
+		array = append(array, ToInt(input[i]))
+	}
+	return array
+}

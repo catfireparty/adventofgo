@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	path := "./day4/data.txt"
+	path := "./day5/data.txt"
 	day5.PartOne(path)
 	day5.PartTwo(path)
 }
