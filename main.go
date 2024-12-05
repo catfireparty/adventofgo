@@ -1,11 +1,11 @@
 package main
 
 import (
-	"adventofgo.dev/day4"
+	"adventofgo.dev/day5"
 )
 
 func main() {
 	path := "./day4/data.txt"
-	day4.PartOne(path)
-	day4.PartTwo(path)
+	day5.PartOne(path)
+	day5.PartTwo(path)
 }
