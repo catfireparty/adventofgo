@@ -1,4 +1,4 @@
-module adventofgo.dev/dayX
+module adventofgo.dev/day6
 
 go 1.23.3
 
