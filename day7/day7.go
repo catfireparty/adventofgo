@@ -12,6 +12,8 @@ type Calibration struct {
 	values []uint64
 }
 
+type Operation uint64
+
 var Multiply = uint64(1)
 var Addition = uint64(2)
 var Concat = uint64(3)
@@ -23,17 +25,59 @@ func PartOne(path string) {
 
 	totalCalibrationResult := uint64(0)
 	for i := range calibrations {
-		target := calibrations[i].result
-		expressions := generateExpressions(calibrations[i].values, []uint64{Multiply, Addition})
-		for j := range expressions {
-			if evaluateExpression(expressions[j], target) {
-				totalCalibrationResult += target
-				break
-			}
+		if isPossible(calibrations[i].result, calibrations[i].values, []Operation{Operation(Multiply), Operation(Addition)}) {
+			totalCalibrationResult += calibrations[i].result
 		}
 	}
 
 	fmt.Println("Total calibration result:", totalCalibrationResult)
+}
+
+type EquationStep struct {
+	value uint64
+	index int
+}
+
+// Use something like Dijkstra's algorithm to explore the equation space
+func isPossible(expected uint64, values []uint64, operations []Operation) bool {
+	frontier := []EquationStep{
+		{values[0], 0},
+	}
+
+	for {
+		current := frontier[0]
+		frontier = frontier[1:]
+
+		for i := range operations {
+			nextValue := current.value
+			nextIndex := current.index + 1
+			switch operations[i] {
+			case Operation(Multiply):
+				nextValue = current.value * values[nextIndex]
+			case Operation(Addition):
+				nextValue = current.value + values[nextIndex]
+			case Operation(Concat):
+				nextValue = utils.ToUint64(fmt.Sprintf("%d%d", current.value, values[nextIndex]))
+			}
+
+			if nextIndex == (len(values) - 1) {
+				if nextValue == expected {
+					return true
+				}
+			} else {
+				frontier = append(frontier, EquationStep{
+					nextValue,
+					nextIndex,
+				})
+			}
+		}
+
+		if len(frontier) == 0 {
+			break
+		}
+	}
+
+	return false
 }
 
 func evaluateExpression(expression []uint64, expected uint64) bool {
@@ -108,13 +152,8 @@ func PartTwo(path string) {
 
 	totalCalibrationResult := uint64(0)
 	for i := range calibrations {
-		target := calibrations[i].result
-		expressions := generateExpressions(calibrations[i].values, []uint64{Multiply, Addition, Concat})
-		for j := range expressions {
-			if evaluateExpression(expressions[j], target) {
-				totalCalibrationResult += target
-				break
-			}
+		if isPossible(calibrations[i].result, calibrations[i].values, []Operation{Operation(Multiply), Operation(Addition), Operation(Concat)}) {
+			totalCalibrationResult += calibrations[i].result
 		}
 	}
 
