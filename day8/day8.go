@@ -17,7 +17,7 @@ func PartOne(path string) {
 	data := utils.ReadFile(path)
 	grid := createGrid(data)
 	antennae := findAntennae(grid)
-	antinodes := findAntinodes(antennae)
+	antinodes := findAntinodesPartOne(antennae)
 
 	uniqueLocations := 0
 	for i := range antinodes {
@@ -81,7 +81,7 @@ func findAntennae(grid [][]string) map[string][]Point {
 // X1 = (x0 - dx, y0 - dy)
 // y1 will always be >= y0
 // x1 might be less or greater so have to check
-func findAntinodes(antennae map[string][]Point) []Point {
+func findAntinodesPartOne(antennae map[string][]Point) []Point {
 	antinodes := []Point{}
 	for _, points := range antennae {
 		nodes := []Point{}
@@ -107,8 +107,71 @@ func findAntinodes(antennae map[string][]Point) []Point {
 	return antinodes
 }
 
+// for each pair of antennae, find the antinodes
+// these occur all along the line connecting them
+// So, find y = mx + c
+// and for every point in the grid that satisfies that
+// equation, there is an antinode.
+func findAntinodesPartTwo(grid [][]string, antennae map[string][]Point) []Point {
+	antinodes := []Point{}
+	for _, points := range antennae {
+		nodes := []Point{}
+		// iterate through every pair
+		for i := range points {
+			for j := i + 1; j < len(points); j++ {
+				x0 := points[i].x
+				x1 := points[j].x
+				y0 := points[i].y
+				y1 := points[j].y
+
+				//go through the entire grid (! - there must be a faster way)
+				for y2 := range grid {
+					for x2 := range grid[y2] {
+						// calculate area of shape bounded by (x,y), (x0,y0) and (x1, y1)
+						// cf. https://www.omnicalculator.com/math/area-triangle-coordinates
+						areaX2 := x0*(y1-y2) + x1*(y2-y0) + x2*(y0-y1)
+						if areaX2 == 0 {
+							nodes = append(nodes, Point{x2, y2})
+						}
+					}
+				}
+			}
+		}
+
+		// fmt.Println(key, nodes)
+		antinodes = append(antinodes, nodes...)
+	}
+
+	return antinodes
+}
+
 func PartTwo(path string) {
 	fmt.Println("Day 8 - Part 2: ")
 	data := utils.ReadFile(path)
-	fmt.Println(len(data))
+	grid := createGrid(data)
+
+	antennae := findAntennae(grid)
+	antinodes := findAntinodesPartTwo(grid, antennae)
+
+	uniqueLocations := 0
+	for i := range antinodes {
+		x := antinodes[i].x
+		y := antinodes[i].y
+
+		if y >= len(grid) || x >= len(grid[0]) || x < 0 || y < 0 {
+			continue
+		}
+
+		if grid[y][x] != "#" {
+			uniqueLocations++
+			grid[y][x] = "#"
+		}
+	}
+
+	// print out the antinodes on the grid
+	// for i := range grid {
+	// 	fmt.Println(strings.Join(grid[i], ""))
+	// }
+
+	fmt.Println("Unique locations:", uniqueLocations)
 }
