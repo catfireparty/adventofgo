@@ -8,22 +8,22 @@ import (
 )
 
 type Calibration struct {
-	result uint64
-	values []uint64
+	result int
+	values []int
 }
 
-type Operation uint64
+type Operation int
 
-var Multiply = uint64(1)
-var Addition = uint64(2)
-var Concat = uint64(3)
+var Multiply = int(1)
+var Addition = int(2)
+var Concat = int(3)
 
 func PartOne(path string) {
 	fmt.Println("Day 7 - Part 1: ")
 	data := utils.ReadFile(path)
 	calibrations := readCalibrations(data)
 
-	totalCalibrationResult := uint64(0)
+	totalCalibrationResult := int(0)
 	for i := range calibrations {
 		if isPossible(calibrations[i].result, calibrations[i].values, []Operation{Operation(Multiply), Operation(Addition)}) {
 			totalCalibrationResult += calibrations[i].result
@@ -34,12 +34,12 @@ func PartOne(path string) {
 }
 
 type EquationStep struct {
-	value uint64
+	value int
 	index int
 }
 
 // Use something like Dijkstra's algorithm to explore the equation space
-func isPossible(expected uint64, values []uint64, operations []Operation) bool {
+func isPossible(expected int, values []int, operations []Operation) bool {
 	frontier := []EquationStep{
 		{values[0], 0},
 	}
@@ -57,7 +57,7 @@ func isPossible(expected uint64, values []uint64, operations []Operation) bool {
 			case Operation(Addition):
 				nextValue = current.value + values[nextIndex]
 			case Operation(Concat):
-				nextValue = utils.ToUint64(fmt.Sprintf("%d%d", current.value, values[nextIndex]))
+				nextValue = utils.ToInt(fmt.Sprintf("%d%d", current.value, values[nextIndex]))
 			}
 
 			if nextIndex == (len(values) - 1) {
@@ -80,7 +80,7 @@ func isPossible(expected uint64, values []uint64, operations []Operation) bool {
 	return false
 }
 
-func evaluateExpression(expression []uint64, expected uint64) bool {
+func evaluateExpression(expression []int, expected int) bool {
 	result := expression[0]
 	for i := 2; i < len(expression); i += 2 {
 		operator := expression[i-1]
@@ -91,7 +91,7 @@ func evaluateExpression(expression []uint64, expected uint64) bool {
 			result *= expression[i]
 		}
 		if operator == Concat {
-			result = utils.ToUint64(fmt.Sprintf("%d%d", result, expression[i]))
+			result = utils.ToInt(fmt.Sprintf("%d%d", result, expression[i]))
 		}
 		if result > expected {
 			return false
@@ -100,18 +100,18 @@ func evaluateExpression(expression []uint64, expected uint64) bool {
 	return result == expected
 }
 
-func generateExpressions(values []uint64, operators []uint64) [][]uint64 {
-	expressions := [][]uint64{{values[0]}}
+func generateExpressions(values []int, operators []int) [][]int {
+	expressions := [][]int{{values[0]}}
 
 	for i := 1; i < len(values); i++ {
-		updated := [][]uint64{}
+		updated := [][]int{}
 		for j := range expressions {
 			// for each expression, create another for each operator
 			value := values[i]
 			length := len(expressions[j]) + 2
 
 			for k := range operators {
-				operation := make([]uint64, length)
+				operation := make([]int, length)
 
 				copy(operation, expressions[j])
 				operation[length-2] = operators[k]
@@ -138,8 +138,8 @@ func readCalibrations(data string) []Calibration {
 		parts := strings.Split(line, ": ")
 
 		calibration = append(calibration, Calibration{
-			utils.ToUint64(parts[0]),
-			utils.ToUint64Array(strings.Split(parts[1], " ")),
+			utils.ToInt(parts[0]),
+			utils.ToIntArray(strings.Split(parts[1], " ")),
 		})
 	}
 	return calibration
@@ -150,7 +150,7 @@ func PartTwo(path string) {
 	data := utils.ReadFile(path)
 	calibrations := readCalibrations(data)
 
-	totalCalibrationResult := uint64(0)
+	totalCalibrationResult := int(0)
 	for i := range calibrations {
 		if isPossible(calibrations[i].result, calibrations[i].values, []Operation{Operation(Multiply), Operation(Addition), Operation(Concat)}) {
 			totalCalibrationResult += calibrations[i].result
