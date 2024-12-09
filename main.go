@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"time"
 
-	"adventofgo.dev/day8"
+	"adventofgo.dev/day9"
 )
 
 func main() {
-	path := "./day8/data.txt"
+	path := "./day9/data.txt"
 	start := time.Now()
-	day8.PartOne(path)
+	day9.PartOne(path)
 	elapsed := time.Since(start)
 	fmt.Printf("Part 1 took %s \n", elapsed)
 
 	start = time.Now()
-	day8.PartTwo(path)
+	day9.PartTwo(path)
 	elapsed = time.Since(start)
 	fmt.Printf("Part 2 took %s \n", elapsed)
 }
