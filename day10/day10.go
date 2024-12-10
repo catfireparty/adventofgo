@@ -28,7 +28,7 @@ func PartOne(path string) {
 	for y := range grid {
 		for x := range grid[y] {
 			if grid[y][x] == 0 {
-				score := findPaths(Point{x, y}, grid)
+				score := findPaths(Point{x, y}, grid, false)
 				totalScore += score
 			}
 		}
@@ -57,7 +57,7 @@ func getKey(point Point) string {
 	return fmt.Sprintf("%d:%d", point.x, point.y)
 }
 
-func findPaths(start Point, grid [][]int) int {
+func findPaths(start Point, grid [][]int, findDistinct bool) int {
 	numPaths := 0
 	current := 1
 	frontier := getFrontierPoints(start, grid, current)
@@ -71,10 +71,12 @@ func findPaths(start Point, grid [][]int) int {
 		tried := make(map[string]bool)
 		for i := range frontier {
 			point := frontier[i]
-			if tried[getKey(point)] {
-				continue
+			if !findDistinct {
+				if tried[getKey(point)] {
+					continue
+				}
+				tried[getKey(point)] = true
 			}
-			tried[getKey(point)] = true
 			if current == 9 {
 				numPaths++
 			} else {
@@ -102,5 +104,17 @@ func createGrid(data string) [][]int {
 func PartTwo(path string) {
 	fmt.Println("Day 10 - Part 2: ")
 	data := utils.ReadFile(path)
-	fmt.Println(len(data))
+	grid := createGrid(data)
+
+	totalScore := 0
+	for y := range grid {
+		for x := range grid[y] {
+			if grid[y][x] == 0 {
+				score := findPaths(Point{x, y}, grid, true)
+				totalScore += score
+			}
+		}
+	}
+
+	fmt.Println("Total path score:", totalScore)
 }
