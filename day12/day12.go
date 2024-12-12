@@ -3,6 +3,7 @@ package day12
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"adventofgo.dev/utils"
 )
@@ -20,8 +21,18 @@ var directions = []Point{
 	{0, -1},
 }
 
-func PartOne(path string) {
+type Grid [][]string
+
+func (grid Grid) getPlant(point Point) string {
+	if point.x < 0 || point.y < 0 || point.y > len(grid)-1 || point.x > len(grid[0])-1 {
+		return "*"
+	}
+	return grid[point.y][point.x]
+}
+
+func PartOne(path string) time.Duration {
 	fmt.Println("Day 12 - Part 1: ")
+	start := time.Now()
 	data := utils.ReadFile(path)
 	grid := createGrid(data)
 	areas := findAreas(grid)
@@ -35,18 +46,19 @@ func PartOne(path string) {
 	}
 
 	fmt.Println("Total price for fencing:", totalPrice)
+	return time.Since(start)
 }
 
-func findPerimeter(points []Point, grid [][]string) int {
+func findPerimeter(points []Point, grid Grid) int {
 	p := 0
 	for i := range points {
-		start := points[i]
+		current := points[i]
+		currentPlant := grid.getPlant(current)
 		for i := range directions {
-			x := start.x + directions[i].x
-			y := start.y + directions[i].y
-			if x < 0 || y < 0 || y > len(grid)-1 || x > len(grid[0])-1 {
-				p++
-			} else if grid[y][x] != grid[start.y][start.x] {
+			x := current.x + directions[i].x
+			y := current.y + directions[i].y
+			plant := grid.getPlant(Point{x, y})
+			if plant != currentPlant {
 				p++
 			}
 		}
@@ -54,9 +66,9 @@ func findPerimeter(points []Point, grid [][]string) int {
 	return p
 }
 
-func createGrid(data string) [][]string {
+func createGrid(data string) Grid {
 	lines := strings.Split(data, "\n")
-	grid := [][]string{}
+	grid := Grid{}
 	for i := range lines {
 		if len(lines[i]) > 0 {
 			grid = append(grid, strings.Split(lines[i], ""))
@@ -69,23 +81,20 @@ func getKey(point Point) string {
 	return fmt.Sprintf("%d:%d", point.x, point.y)
 }
 
-func getFrontierPoints(start Point, grid [][]string, currentPlant string) []Point {
+func getFrontierPoints(start Point, grid Grid, currentPlant string) []Point {
 	frontier := []Point{}
 	for i := range directions {
 		x := start.x + directions[i].x
 		y := start.y + directions[i].y
 		point := Point{x, y}
-		if x < 0 || y < 0 || y > len(grid)-1 || x > len(grid[0])-1 {
-			continue
-		}
-		if grid[y][x] == currentPlant {
+		if grid.getPlant(Point{x, y}) == currentPlant {
 			frontier = append(frontier, point)
 		}
 	}
 	return frontier
 }
 
-func findAreas(grid [][]string) [][]Point {
+func findAreas(grid Grid) [][]Point {
 	// let's iterate through the grid, doing a kind
 	// of flood fill with a breadth-first search
 	// to get all the areas
@@ -136,14 +145,7 @@ func findAreas(grid [][]string) [][]Point {
 	return areas
 }
 
-func getPlant(x int, y int, grid [][]string) string {
-	if x < 0 || y < 0 || y > len(grid)-1 || x > len(grid[0])-1 {
-		return "*"
-	}
-	return grid[y][x]
-}
-
-func findCorners(area []Point, grid [][]string) int {
+func findCorners(area []Point, grid Grid) int {
 	// concave and convex corners
 
 	corners := 0
@@ -153,14 +155,14 @@ func findCorners(area []Point, grid [][]string) int {
 		x := current.x
 		y := current.y
 
-		n := getPlant(x, y+1, grid)
-		ne := getPlant(x+1, y+1, grid)
-		e := getPlant(x+1, y, grid)
-		se := getPlant(x+1, y-1, grid)
-		s := getPlant(x, y-1, grid)
-		sw := getPlant(x-1, y-1, grid)
-		w := getPlant(x-1, y, grid)
-		nw := getPlant(x-1, y+1, grid)
+		n := grid.getPlant(Point{x, y + 1})
+		ne := grid.getPlant(Point{x + 1, y + 1})
+		e := grid.getPlant(Point{x + 1, y})
+		se := grid.getPlant(Point{x + 1, y - 1})
+		s := grid.getPlant(Point{x, y - 1})
+		sw := grid.getPlant(Point{x - 1, y - 1})
+		w := grid.getPlant(Point{x - 1, y})
+		nw := grid.getPlant(Point{x - 1, y + 1})
 
 		// convex corners
 		if n != plant && e != plant {
@@ -194,8 +196,9 @@ func findCorners(area []Point, grid [][]string) int {
 	return corners
 }
 
-func PartTwo(path string) {
+func PartTwo(path string) time.Duration {
 	fmt.Println("Day 12 - Part 2: ")
+	start := time.Now()
 	data := utils.ReadFile(path)
 	grid := createGrid(data)
 	areas := findAreas(grid)
@@ -209,4 +212,5 @@ func PartTwo(path string) {
 	}
 
 	fmt.Println("Total price for fencing:", totalPrice)
+	return time.Since(start)
 }
