@@ -4,18 +4,20 @@ import (
 	"fmt"
 	"time"
 
-	"adventofgo.dev/day13"
+	"adventofgo.dev/day14"
+	"adventofgo.dev/utils"
 )
 
 func main() {
-	path := "./day13/data.txt"
+	data := utils.ReadFile("./day14/data.txt")
+
 	start := time.Now()
-	day13.PartOne(path)
+	day14.PartOne(data)
 	elapsed := time.Since(start)
 	fmt.Printf("Part 1 took %s \n", elapsed)
 
 	start = time.Now()
-	day13.PartTwo(path)
+	day14.PartTwo(data)
 	elapsed = time.Since(start)
 	fmt.Printf("Part 2 took %s \n", elapsed)
 }
