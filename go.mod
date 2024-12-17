@@ -30,8 +30,10 @@ replace adventofgo.dev/day13 => ./day13
 
 replace adventofgo.dev/day14 => ./day14
 
+replace adventofgo.dev/day15 => ./day15
+
 replace adventofgo.dev/utils => ./utils
 
-require adventofgo.dev/day14 v0.0.0-00010101000000-000000000000
+require adventofgo.dev/day15 v0.0.0-00010101000000-000000000000
 
-require adventofgo.dev/utils v0.0.0-00010101000000-000000000000 // indirect
+require adventofgo.dev/utils v0.0.0-00010101000000-000000000000
