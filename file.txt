@@ -1,0 +1,6 @@
+Day 16 - Part 1: 
+Minimum cost to reach the end: 135536
+Part 1 took 17.994583ms 
+Day 16 - Part 2: 
+Number of tiles: 583
+Part 2 took 111.788209ms 
