@@ -34,9 +34,13 @@ replace adventofgo.dev/day15 => ./day15
 
 replace adventofgo.dev/day16 => ./day16
 
+replace adventofgo.dev/day17 => ./day17
+
+replace adventofgo.dev/day18 => ./day18
+
 replace adventofgo.dev/utils => ./utils
 
 require (
-	adventofgo.dev/day16 v0.0.0-00010101000000-000000000000
+	adventofgo.dev/day18 v0.0.0-00010101000000-000000000000
 	adventofgo.dev/utils v0.0.0-00010101000000-000000000000
 )
